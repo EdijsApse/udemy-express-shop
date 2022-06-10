@@ -1,5 +1,5 @@
 function getSignup(req, res) {
-    res.send('Signup view');
+    res.render('customer/auth/signup');
 }
 
 function signup(req, res) {
