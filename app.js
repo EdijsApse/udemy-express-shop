@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
+const database = require('./data/database');
+
 const authRoutes = require('./routes/auth.routes');
 
 app.set('view engine', 'ejs');
@@ -15,4 +17,11 @@ app.get('/', (req, res) => {
 
 app.use(authRoutes);
 
-app.listen(3000);
+database.connectToDatabase()
+.then(() => {
+    app.listen(3000);
+})
+.catch((err) => {
+    console.log('Failed to connect to DB!');
+    console.log(err);
+})
