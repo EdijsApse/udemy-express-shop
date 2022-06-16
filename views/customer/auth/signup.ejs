@@ -6,43 +6,49 @@
     <%- include('../../shared/includes/header') %>
     <main>
         <h1>Create new account</h1>
+        <% if (sessionData.errorMessage) { %>
+            <section class="alert">
+                <h2>Invalid input</h2>
+                <p><%= sessionData.errorMessage %></p>
+            </section>
+        <% } %> 
         <form action="/signup" method="POST">
             <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
             <div class="form-group">
                 <label for="email">E-Mail</label>
-                <input id="email" type="email" name="email" required/>
+                <input id="email" type="email" name="email" value="<%= sessionData.email %>" required/>
             </div>
 
             <div class="form-group">
                 <label for="confirm-email">Confirm E-Mail</label>
-                <input id="confirm-email" type="email" name="confirm-email" required/>
+                <input id="confirm-email" type="email" name="confirm-email" value="<%= sessionData['confirm-email'] %>" required/>
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
-                <input id="password" type="password" name="password" minlength="6" required/>
+                <input id="password" type="password" name="password" minlength="6" value="<%= sessionData.password %>" required/>
             </div>
 
             <hr>
             
             <div class="form-group">
                 <label for="fullname">Fullname</label>
-                <input id="fullname" type="text" name="fullname" required/>
+                <input id="fullname" type="text" name="fullname" value="<%= sessionData.fullname %>" required/>
             </div>
 
             <div class="form-group">
                 <label for="street">Street</label>
-                <input id="street" type="text" name="street" required/>
+                <input id="street" type="text" name="street" required value="<%= sessionData.street %>" />
             </div>
 
             <div class="form-group">
                 <label for="postal">Postal</label>
-                <input id="postal" type="text" name="postal" minlength="4" maxlength="4" required/>
+                <input id="postal" type="text" name="postal" minlength="4" maxlength="4" value="<%= sessionData.postal %>" required/>
             </div>
 
             <div class="form-group">
                 <label for="city">City</label>
-                <input id="city" type="text" name="city" required/>
+                <input id="city" type="text" name="city" required value="<%= sessionData.city %>" />
             </div>
 
             <button type="submit" class="btn">Create account</button>

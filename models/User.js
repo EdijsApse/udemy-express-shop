@@ -28,6 +28,12 @@ class User {
         return database.getDb().collection('users').findOne({ email: this.email });
     }
 
+    async existsAlready() {
+        const existingUser = await this.getUserWithSameEmail();
+        
+        return existingUser ? true : false;
+    }
+
     passwordMatched(hashedPassword) {
         return bcrypt.compare(this.password, hashedPassword)
     }

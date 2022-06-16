@@ -2,15 +2,70 @@ const User = require("../models/User");
 
 const authUtil = require('../util/authentication');
 
+const validation = require('../util/validation');
+
+const sessionFlash = require('../util/session-flash');
+
 function getSignup(req, res) {
-    res.render('customer/auth/signup');
+    let sessionData = sessionFlash.getSessionData(req);
+
+    if (!sessionData) {
+        sessionData = {
+            email: '',
+            'confirm-email': '',
+            password: '',
+            fullname: '',
+            street: '',
+            postal: '',
+            city: ''
+        }
+    }
+
+    res.render('customer/auth/signup', { sessionData });
 }
 
-async function signup(req, res, err) {
-    const user = new User(req.body.email, req.body.password, req.body.fullname, req.body.street, req.body.postal, req.body.city);
+async function signup(req, res, next) {
+    const enteredData = {
+        email: req.body.email,
+        password: req.body.password,
+        fullname: req.body.fullname,
+        street: req.body.street,
+        postal: req.body.postal,
+        city: req.body.city
+    };
+
+    if (!validation.userDetailsAreValid(enteredData.email, enteredData.password, enteredData.fullname, enteredData.street, enteredData.postal, enteredData.city) || !validation.emailIsConfirmed(enteredData.email, req.body['confirm-email'])) {
+        
+        sessionFlash.flashDataToSession(req, {
+            errorMessage: 'Please check your input !',
+            ...enteredData,
+            'confirm-email': req.body['confirm-email']
+        }, () => {
+            res.redirect('/signup')
+        })
+
+        return;
+    }
+
+    const user = new User(enteredData.email, enteredData.password, enteredData.fullname, enteredData.street, enteredData.postal, enteredData.city);
 
     try {
-        await user.signup();   
+        const existsAlready = await user.existsAlready();
+
+        if (existsAlready) {
+            
+            sessionFlash.flashDataToSession(req, {
+                errorMessage: 'User with this email already exists !',
+                ...enteredData,
+                'confirm-email': req.body['confirm-email']
+            }, () => {
+                res.redirect('/signup')
+            })
+
+            return;
+        }
+
+        await user.signup();
     } catch(error) {
         return next(error);
     }
@@ -19,16 +74,33 @@ async function signup(req, res, err) {
 }
 
 function getLogin(req, res) {
-    res.render('customer/auth/login')
+    let sessionData = sessionFlash.getSessionData(req);
+
+    if (!sessionData) {
+        sessionData = {
+            email: '',
+            password: ''
+        }
+    }
+
+    res.render('customer/auth/login', { sessionData })
 }
 
 async function login(req, res, next) {
     const user = new User(req.body.email, req.body.password);
     const existingUser = await user.getUserWithSameEmail();
     let passwordMatched;
+    const sessionErrorData = {
+        errorMessage: 'Incorret email or password !',
+        ...{email: req.body.email, password: req.body.password}
+    };
 
     if (!existingUser) {
-        return res.redirect('/login');
+        sessionFlash.flashDataToSession(req, sessionErrorData, () => {
+            res.redirect('/login')
+        });
+
+        return;
     }
 
     try {
@@ -38,7 +110,11 @@ async function login(req, res, next) {
     }
 
     if (!passwordMatched) {
-        return res.redirect('/login');
+        sessionFlash.flashDataToSession(req, sessionErrorData, () => {
+            res.redirect('/login')
+        });
+
+        return;
     }
 
     authUtil.createUserSession(req, existingUser, () => {
