@@ -10,6 +10,7 @@ const csrfLocalMiddleware = require('./middlewares/csrfToken');
 const errorHandler = require('./middlewares/errorHandler');
 const checkAuthMiddleware = require('./middlewares/checkAuth');
 
+const adminRoutes = require('./routes/admin.routes');
 const authRoutes = require('./routes/auth.routes');
 const productsRoutes = require('./routes/products.routes');
 const baseRoutes = require('./routes/base.routes');
@@ -34,6 +35,7 @@ app.use(checkAuthMiddleware);
 app.use(baseRoutes);
 app.use(productsRoutes);
 app.use(authRoutes);
+app.use('/admin', adminRoutes);
 
 app.use(errorHandler);
 
