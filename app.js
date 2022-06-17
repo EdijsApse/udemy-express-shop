@@ -23,6 +23,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static('public'));
+app.use('/products/assets/images', express.static('product-data/images'))
 app.use(express.urlencoded({ extended: false }));
 
 app.use(expressSession(sessionConfig));
@@ -36,6 +37,10 @@ app.use(baseRoutes);
 app.use(productsRoutes);
 app.use(authRoutes);
 app.use('/admin', adminRoutes);
+
+app.use('*', (req, res) => {
+    res.render('shared/404');
+});
 
 app.use(errorHandler);
 

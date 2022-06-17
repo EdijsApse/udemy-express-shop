@@ -1,7 +1,12 @@
 const Product = require("../models/Product");
 
-function getProducts(req, res) {
-    res.render('admin/products/all-products');
+async function getProducts(req, res, next) {
+    try {
+        const products = await Product.findAll();
+        res.render('admin/products/all-products', { products });
+    } catch(err) {
+        next(err);
+    }
 }
 
 function addProduct(req, res) {
@@ -16,6 +21,33 @@ async function createProduct(req, res, next) {
 
     try {
         await product.save();
+        res.redirect('/admin/products');
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function editProduct(req, res, next) {
+    try {
+        const product = await Product.getById(req.params.id);
+        res.render('admin/products/update-product', { product })
+    } catch(err) {
+        next(err);
+    }
+}
+
+async function updateProduct(req, res, next) {
+    const product = new Product({
+        ...req.body,
+        _id: req.params.id
+    });
+
+    if (req.file) {
+        product.replaceImage(req.file.filename);
+    }
+
+    try {
+        await product.save();
     } catch(err) {
         next(err);
         return;
@@ -24,8 +56,21 @@ async function createProduct(req, res, next) {
     res.redirect('/admin/products');
 }
 
+async function deleteProduct(req, res, next) {
+    try {
+        const product = await Product.getById(req.params.id);
+        await product.deleteProduct();
+        res.redirect('/admin/products');
+    } catch(err) {
+        next(err);
+    }
+}
+
 module.exports = {
     getProducts: getProducts,
     addProduct: addProduct,
-    createProduct: createProduct
+    createProduct: createProduct,
+    deleteProduct: deleteProduct,
+    editProduct: editProduct,
+    updateProduct: updateProduct
 }

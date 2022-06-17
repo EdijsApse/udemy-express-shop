@@ -9,4 +9,8 @@ router.post('/products', imageUploadMiddleware, controller.createProduct);
 
 router.get('/products/new', controller.addProduct);
 
+router.get('/products/:id', controller.editProduct);
+router.post('/products/:id', imageUploadMiddleware, controller.updateProduct);
+router.post('/products/:id/delete', controller.deleteProduct);
+
 module.exports = router;
