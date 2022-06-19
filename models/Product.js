@@ -44,7 +44,11 @@ class Product {
     }
 
     getAdminUrl() {
-        return `/admin/products/${this.id}`;
+        return `/admin${this.getUserUrl()}`;
+    }
+
+    getUserUrl() {
+        return `/products/${this.id}`;
     }
 
     static async getById(id) {

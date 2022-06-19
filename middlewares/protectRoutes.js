@@ -20,7 +20,7 @@ function passIfGuest(req, res, next) {
 
 function passIfUser(req, res, next) {
     const isAuth = res.locals.isAuth;
-    if (isAuth) {
+    if (!isAuth) {
         const error = new Error('Unauthenticated');
         error.code = 401;
         return next(error);
