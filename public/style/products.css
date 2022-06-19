@@ -32,7 +32,3 @@
     gap: var(--space-2);
     margin: var(--space-4) 0;
 }
-
-.product-item .product-item-content .product-item-actions form .btn {
-    height: 100%;
-}
