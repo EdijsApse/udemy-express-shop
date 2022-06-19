@@ -3,12 +3,14 @@ const router = express.Router();
 
 const controller = require('../controllers/auth.controller');
 
-router.get('/login', controller.getLogin);
-router.post('/login', controller.login);
+const protectRoutesMiddlewares = require('../middlewares/protectRoutes');
 
-router.get('/signup', controller.getSignup);
-router.post('/signup', controller.signup);
+router.get('/login', protectRoutesMiddlewares.passIfGuest, controller.getLogin);
+router.post('/login', protectRoutesMiddlewares.passIfGuest, controller.login);
 
-router.post('/logout', controller.logout);
+router.get('/signup', protectRoutesMiddlewares.passIfGuest, controller.getSignup);
+router.post('/signup', protectRoutesMiddlewares.passIfGuest, controller.signup);
+
+router.post('/logout', protectRoutesMiddlewares.passIfUser, controller.logout);
 
 module.exports = router;

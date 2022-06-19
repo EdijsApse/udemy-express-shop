@@ -14,6 +14,7 @@ const adminRoutes = require('./routes/admin.routes');
 const authRoutes = require('./routes/auth.routes');
 const productsRoutes = require('./routes/products.routes');
 const baseRoutes = require('./routes/base.routes');
+const protectRoutesMiddlewares = require('./middlewares/protectRoutes');
 
 const createSessionConfig = require('./config/session');
 
@@ -36,10 +37,12 @@ app.use(checkAuthMiddleware);
 app.use(baseRoutes);
 app.use(productsRoutes);
 app.use(authRoutes);
-app.use('/admin', adminRoutes);
+app.use('/admin', protectRoutesMiddlewares.passIfAdmin, adminRoutes);
 
-app.use('*', (req, res) => {
-    res.render('shared/404');
+app.use('*', (req, res, next) => {
+    const error = new Error('Route not found!');
+    error.code = 404;
+    next(error);
 });
 
 app.use(errorHandler);
