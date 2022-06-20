@@ -1,9 +1,11 @@
 class Cart {
-    constructor(items = []) {
+    constructor(items = [], totalQuantity = 0, totalPrice = 0) {
         this.items = items;
+        this.totalQuantity = totalQuantity;
+        this.totalPrice = totalPrice;
     }
     
-    additem(product) {
+    addItem(product) {
         const cartItem = {
             quantity: 1,
             product: product,
@@ -14,12 +16,32 @@ class Cart {
         });
 
         if (index !== -1) {
-            cartItem.quantity = cartItem.quantity + 1;
-            cartItem.totalPrice = cartItem.totalPrice + cart.price;
+            let existingProduct = this.items[index];
+
+            cartItem.quantity = existingProduct.quantity + 1;
+            cartItem.totalPrice = existingProduct.price + product.price;
             this.items[index] = cartItem;
+
+            this.totalQuantity++;
+            this.totalPrice += product.price;
         } else {
             this.items.push(cartItem);
+            
+            this.totalQuantity++;
+            this.totalPrice += product.price;
         }
+    }
+
+    getTotalItems() {
+        return this.items.reduce((count, cartItem) => {
+            return count + cartItem.quantity;
+        }, 0);
+    }
+
+    getTotalPrice() {
+        return this.items.reduce((count, cartItem) => {
+            return count + cartItem.totalPrice;
+        }, 0);
     }
 }
 
