@@ -29,6 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use('/products/assets/images', express.static('product-data/images'))
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());// Express will parse JSON string format, whats coming from AJAX requests (with proper header)
 
 app.use(expressSession(sessionConfig));
 

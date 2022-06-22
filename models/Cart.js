@@ -11,16 +11,13 @@ class Cart {
             product: product,
             totalPrice: product.price
         }
-        const index = this.items.findIndex((item) => {
-            return item.product.id == product.id;
-        });
 
-        if (index !== -1) {
-            let existingProduct = this.items[index];
+        const item = this.findProductById(product.id);
 
-            cartItem.quantity = existingProduct.quantity + 1;
-            cartItem.totalPrice = existingProduct.price + product.price;
-            this.items[index] = cartItem;
+        if (item) {
+            cartItem.quantity = item.quantity + 1;
+            cartItem.totalPrice = item.totalPrice + product.price;
+            item = cartItem;
 
             this.totalQuantity++;
             this.totalPrice += product.price;
@@ -32,16 +29,40 @@ class Cart {
         }
     }
 
-    getTotalItems() {
-        return this.items.reduce((count, cartItem) => {
-            return count + cartItem.quantity;
+    updateProductQuantity(quantity, product_id) {
+        const item = this.findProductById(product_id);
+
+        if (quantity < 0 || isNaN(quantity)) {
+            const error = new Error('Quantity should be a valid number!');
+            throw error;
+        }
+
+        if (!item) {
+            const error = new Error('Product not found!');
+            error.code = 404;
+            throw error;
+        }
+
+        item.quantity = +quantity;
+        item.totalPrice = quantity * item.product.price;
+
+        this.updateCartTotals();
+    }
+
+    updateCartTotals() {
+        this.totalPrice = this.items.reduce((currentValue, nextItem) => {
+            return currentValue + nextItem.totalPrice;
+        }, 0);
+
+        this.totalQuantity = this.items.reduce((currentValue, nextItem) => {
+            return currentValue + nextItem.quantity;
         }, 0);
     }
 
-    getTotalPrice() {
-        return this.items.reduce((count, cartItem) => {
-            return count + cartItem.totalPrice;
-        }, 0);
+    findProductById(product_id) {
+        return this.items.find((item) => {
+            return item.product.id == product_id;
+        });
     }
 }
 
