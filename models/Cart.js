@@ -9,24 +9,20 @@ class Cart {
         const cartItem = {
             quantity: 1,
             product: product,
-            totalPrice: product.price
+            totalPrice: +product.price
         }
 
-        const item = this.findProductById(product.id);
-
+        let item = this.findProductById(product.id);
+        
         if (item) {
-            cartItem.quantity = item.quantity + 1;
-            cartItem.totalPrice = item.totalPrice + product.price;
-            item = cartItem;
-
-            this.totalQuantity++;
-            this.totalPrice += product.price;
+            item.quantity = item.quantity + 1;
+            item.totalPrice = +(item.totalPrice + product.price).toFixed(2);
         } else {
             this.items.push(cartItem);
-            
-            this.totalQuantity++;
-            this.totalPrice += product.price;
         }
+
+        this.totalQuantity++;
+        this.totalPrice = +(this.totalPrice + product.price).toFixed(2);
     }
 
     updateProductQuantity(quantity, product_id) {
@@ -44,15 +40,15 @@ class Cart {
         }
 
         item.quantity = +quantity;
-        item.totalPrice = quantity * item.product.price;
+        item.totalPrice = +(quantity * item.product.price).toFixed(2);
 
         this.updateCartTotals();
     }
 
     updateCartTotals() {
-        this.totalPrice = this.items.reduce((currentValue, nextItem) => {
+        this.totalPrice = +(this.items.reduce((currentValue, nextItem) => {
             return currentValue + nextItem.totalPrice;
-        }, 0);
+        }, 0)).toFixed(2);
 
         this.totalQuantity = this.items.reduce((currentValue, nextItem) => {
             return currentValue + nextItem.quantity;

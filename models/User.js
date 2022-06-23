@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { ObjectId } = require('mongodb');
 const database = require('../data/database');
 
 class User {
@@ -36,6 +37,27 @@ class User {
 
     passwordMatched(hashedPassword) {
         return bcrypt.compare(this.password, hashedPassword)
+    }
+
+    static async findDocumentById(id) {
+        let userId;
+        try {
+            userId = new ObjectId(id);
+        } catch(err) {
+            const error = new Error('User not found!');
+            error.code = 404;
+            throw error;
+        }
+        
+        const user = await database.getDb().collection('users').findOne({ _id: new ObjectId(id) }, {projection: { password: 0 }}); // Return all fields except password
+
+        if (!user) {
+            const error = new Error('User not found!');
+            error.code = 404;
+            throw error;
+        }
+
+        return user;
     }
 }
 

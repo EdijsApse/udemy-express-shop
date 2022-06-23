@@ -17,6 +17,8 @@ const authRoutes = require('./routes/auth.routes');
 const productsRoutes = require('./routes/products.routes');
 const baseRoutes = require('./routes/base.routes');
 const cartRoutes = require('./routes/cart.routes');
+const orderRoutes = require('./routes/orders.routes');
+
 const protectRoutesMiddlewares = require('./middlewares/protectRoutes');
 
 const createSessionConfig = require('./config/session');
@@ -42,6 +44,7 @@ app.use(baseRoutes);
 app.use(productsRoutes);
 app.use(authRoutes);
 app.use(cartRoutes);
+app.use('/orders', orderRoutes);
 app.use('/admin', protectRoutesMiddlewares.passIfAdmin, adminRoutes);
 
 app.use('*', (req, res, next) => {

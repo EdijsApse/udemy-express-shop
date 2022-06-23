@@ -15,6 +15,8 @@ function errorHandler(error, req, res, next) {
         return res.status(401).render('shared/401');
     }
 
+    console.log(error)
+
     res.status(500).render('shared/500');
 }
 

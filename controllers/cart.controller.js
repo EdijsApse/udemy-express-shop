@@ -1,4 +1,3 @@
-const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
 async function addCartItem(req, res, next) {
@@ -19,10 +18,6 @@ async function addCartItem(req, res, next) {
         next(err);
         return;
     }
-}
-
-function removeCartItem(req, res, next) {
-    
 }
 
 function getCartItems(req, res, next) {
@@ -53,7 +48,6 @@ function changeProductQuantity(req, res, next) {
 
 module.exports = {
     addCartItem: addCartItem,
-    removeCartItem: removeCartItem,
     getCartItems: getCartItems,
     changeProductQuantity: changeProductQuantity
 }
