@@ -16,10 +16,14 @@
         <div id="cart-total">
             <p>Total: $<span><%= locals.cart.totalPrice %></span></p>
             <% if (locals.isAuth) { %>
-                <form action="/orders" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>" />
-                    <button class="btn" type="submit">Buy products</button>
-                </form>
+                <% if (locals.cart.items.length) { %>
+                    <form action="/orders" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>" />
+                        <button class="btn" type="submit">Buy products</button>
+                    </form>
+                <% } else { %>
+                    <p class="guest-text">No items added to the cart!</p>    
+                <% } %>
             <% } else { %>
                 <p class="guest-text">Log in to purchase items!</p>
             <% } %>

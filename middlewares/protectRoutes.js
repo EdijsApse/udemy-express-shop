@@ -28,8 +28,18 @@ function passIfUser(req, res, next) {
     next();
 }
 
+function passIfItemsInCart(req, res, next) {
+    
+    if (!res.locals.cart || !res.locals.cart.items.length) {
+        return res.redirect('/');
+    }
+
+    next();
+}
+
 module.exports = {
     passIfGuest: passIfGuest,
     passIfAdmin: passIfAdmin,
-    passIfUser: passIfUser
+    passIfUser: passIfUser,
+    passIfItemsInCart: passIfItemsInCart
 };

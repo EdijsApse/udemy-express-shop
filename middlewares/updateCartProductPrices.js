@@ -3,6 +3,8 @@ async function updateCartProductPrices(req, res, next) {
 
     await cart.updateProducts();
 
+    req.session.cart = cart;
+
     next();
 }
 
