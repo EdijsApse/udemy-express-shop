@@ -43,6 +43,28 @@ class Order {
         }
     }
 
+    static async findById(orderId) {
+        let id;
+
+        try {
+            id = new ObjectId(orderId);
+        } catch(err) {
+            const error = new Error('Order not found!');
+            error.code = 404;
+            throw error;
+        }
+
+        const order = await database.getDb().collection('orders').findOne({_id: id});
+
+        if (!order) {
+            const error = new Error('Order not found!');
+            error.code = 404;
+            throw error;
+        }
+
+        return new Order(order);
+    }
+    
     static async getOrdersByUserId(user_id) {
         let userId;
 
@@ -55,6 +77,11 @@ class Order {
         }
 
         const orders = await database.getDb().collection('orders').find({ 'user._id': new ObjectId(user_id) }).sort({_id: -1}).toArray();
+        return orders.map((order) => new Order(order));
+    }
+
+    static async findAll() {
+        const orders = await database.getDb().collection('orders').find().sort({_id: -1}).toArray();
         return orders.map((order) => new Order(order));
     }
 }

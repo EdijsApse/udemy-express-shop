@@ -1,0 +1,11 @@
+<%- include('../../shared/includes/head', { pageTitle: 'Your orders' }) %>
+<script src="/scripts/orders-management.js" defer></script>
+<link rel="stylesheet" href="/style/orders.css">
+</head>
+<body>
+    <%- include('../../shared/includes/header') %>
+    <main>
+        <h1>Manage all orders</h1>
+        <%- include('../../shared/includes/order-list', { orders: orders }) %>
+    </main>
+<%- include('../../shared/includes/footer') %>

@@ -13,4 +13,8 @@ router.get('/products/:id', controller.editProduct);
 router.post('/products/:id', imageUploadMiddleware, controller.updateProduct);
 router.delete('/products/:id', controller.deleteProduct);
 
+router.get('/orders', controller.getOrders);
+
+router.patch('/orders', controller.updateOrderStatus);
+
 module.exports = router;
