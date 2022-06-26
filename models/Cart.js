@@ -1,3 +1,6 @@
+const { ObjectId } = require("mongodb");
+const Product = require('./Product');
+
 class Cart {
     constructor(items = [], totalQuantity = 0, totalPrice = 0) {
         this.items = items;
@@ -59,6 +62,37 @@ class Cart {
         return this.items.find((item) => {
             return item.product.id == product_id;
         });
+    }
+
+    async updateProducts() {
+        //Getting IDs for products that are in the cart
+        const productIds = this.items.map(item => {
+            return new ObjectId(item.product.id);
+        });
+        
+        //Getting products from db, that are in the cart
+        const products = await Product.findAll({ _id: { $in: productIds }});
+
+        //map over all products
+        const items = products.map(product => {
+            //Find item that was in the cart by product
+            const cartItem = this.items.find(item => {
+                return item.product.id === product.id;
+            })
+            
+            //returning new cart item with updated totalPrice and product object
+            return {
+                quantity: cartItem.quantity,
+                product: product,
+                totalPrice: +(cartItem.quantity * product.price).toFixed(2)
+            }
+        });
+
+        //setting items to new array with updated products and prices
+        this.items = items;
+
+        //update totals
+        this.updateCartTotals();
     }
 }
 

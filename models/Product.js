@@ -38,11 +38,6 @@ class Product {
         }
     }
 
-    static async findAll() {
-        const products = await db.getDb().collection('products').find().toArray();
-        return products.map((productDocument) => new Product(productDocument));
-    }
-
     getAdminUrl() {
         return `/admin${this.getUserUrl()}`;
     }
@@ -91,6 +86,11 @@ class Product {
     updateImageData() {
         this.imagePath = `product-data/images/${this.image}`;
         this.imageUrl = `/products/assets/images/${this.image}`;
+    }
+
+    static async findAll(query = {}) {
+        const products = await db.getDb().collection('products').find(query).toArray();
+        return products.map((productDocument) => new Product(productDocument));
     }
 }
 
